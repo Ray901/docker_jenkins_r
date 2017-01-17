@@ -18,6 +18,7 @@ RUN add-apt-repository "deb http://cran.rstudio.com/bin/linux/ubuntu $(lsb_relea
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
 RUN apt-get update && apt-get install -y \
+    sudo \
     libcurl4-gnutls-dev \
     libssl-dev \
     libxml2-dev \
@@ -30,6 +31,8 @@ RUN apt-get update && apt-get install -y \
 ENV JENKINS_HOME /var/jenkins_home
 ENV JENKINS_SLAVE_AGENT_PORT 50000
 
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
+
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
@@ -37,7 +40,7 @@ ARG gid=1000
 
 # install R packages
 RUN R -e "install.packages(c('shiny', 'rmarkdown'), repos='http://cran.rstudio.com/')" && \
-    R -e "install.packages(c('jsonlite','ggplot2','jpeg','httr'),repos='http://cran.rstudio.com/')" && \   
+    R -e "install.packages(c('jsonlite','ggplot2','jpeg','httr','XML'),repos='http://cran.rstudio.com/')" && \   
     R -e "install.packages(c('devtools','dplyr','reshape2','tidyr','openxlsx','data.table','rvest'),repos='http://cran.rstudio.com/')" && \
     R -e "devtools::install_github('ramnathv/htmlwidgets')" && \
     R -e "devtools::install_github('ThomasSiegmund/D3TableFilter')"
